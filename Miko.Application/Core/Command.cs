@@ -81,9 +81,6 @@ public class CommandDispatcher
     /// <param name="message">Message content (Make sure text or caption is not empty)</param>
     public async Task ExecuteCommand(Message message)
     {
-        // TODO: This may will be not working on slashreply or on groups, so add parser for parse string ex: /start@YunaBot 
-        if (message.Text is null && message.Caption is null) return;
-
         var name = (message.Text?.Split(' ') ?? message.Caption?.Split(' ') ?? [])[0];
 
         if (name == "/help") 
@@ -95,7 +92,14 @@ public class CommandDispatcher
                 caption += $"\n*{command.Key}* => {command.Value.Description}";
             }
 
-            await _client.SendTextMessageAsync(message.Chat.Id, caption, parseMode: ParseMode.Markdown);
+            try 
+            {
+                await _client.SendTextMessageAsync(message.Chat.Id, caption, parseMode: ParseMode.Markdown);
+            }
+            catch (Exception error)
+            {
+                await _client.SendTextMessageAsync(message.Chat.Id, $"No handler error defined but an error was thrown: {error.Message}");
+            }
         }
         else if (_commands.TryGetValue(name, out var command))
         {

@@ -16,7 +16,7 @@ public class FunCommands
 
     [Command("/animesauce")]
     [Description("Find anime sauce from screenshot or image.")]
-    public async Task WhatisanimeAsync(Message message)
+    public async Task AnimeSauceAsync(Message message)
     {
         if (message.Photo != null && message.Photo.Length > 0)
         {
@@ -46,7 +46,7 @@ public class FunCommands
             }
             catch (Exception except)
             {
-                await _client.SendTextMessageAsync(chatId: message.Chat.Id, $"Failed to resolve: {except}");
+                await _client.SendTextMessageAsync(chatId: message.Chat.Id, $"Failed to resolve: {except.Message}");
             }
         } 
         else 

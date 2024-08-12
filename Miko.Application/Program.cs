@@ -34,14 +34,26 @@ internal class Program
 
     private static async Task HandleUpdateAsync(ITelegramBotClient client, Update update, CancellationToken cancel)
     {
-        if (update.Type == UpdateType.Message && (update.Message?.Text != null || update.Message?.Caption != null))
+        // TODO: Work with another events
+        if (update.Message != null)
         {
-            await _commands!.ExecuteCommand(update.Message!);
+            if (IsCommand(update.Message))
+                await _commands!.ExecuteCommand(update.Message);
         }
     }
 
     private static Task HandleErrorAsync(ITelegramBotClient client, Exception except, CancellationToken cancel)
     {
         return Task.CompletedTask;
+    }
+
+    private static bool IsCommand(Message message)
+    {
+        if (string.IsNullOrEmpty(message.Text) && string.IsNullOrEmpty(message.Caption))
+            return false;
+        else if ((message.Text?.StartsWith('/') ?? false) || (message.Caption?.StartsWith('/') ?? false))
+            return true;
+        else
+            return false;
     }
 }
